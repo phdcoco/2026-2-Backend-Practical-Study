@@ -1,16 +1,12 @@
 package com.gdghongik.commerce.application.product;
 
 import com.gdghongik.commerce.domain.product.Product;
-import com.gdghongik.commerce.infrastructure.persistence.ProductJpaRepository;
+import com.gdghongik.commerce.domain.product.ProductRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 
 /**
  * 통합 테스트는 실제 DB나 와부 API 등과 연동하여 더 실무적인 관점에서 테스트합니다.
@@ -20,18 +16,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * @ActiveProfiles: test 파일에서는 DataInitializer를 실행하지 않습니다.
  * @Transactional: 테스트가 끝나면 저장한 데이터를 되돌립니다. 테스트 데이터가 원본 데이터에 섞이지 않도록 합니다.
  */
-// TODO[W3-5]: 아래 세 애노테이션을 지우고, 생성자로 ProductService 를 직접 만들어 쓰세요.
-//             FakeProductRepository 를 넘기면 됩니다. @Autowired 도 필요 없어집니다.
-@SpringBootTest
-@ActiveProfiles("test")
-@Transactional
 class ProductServiceTest {
 
-    @Autowired
     private ProductService productService;
+    private ProductRepository productRepository;
 
-    @Autowired
-    private ProductJpaRepository productRepository;
+    @BeforeEach
+    void setUp() {
+        productRepository = new FakeProductRepository();
+        productService = new ProductService(productRepository);
+    }
 
     @Test
     @DisplayName("재고를 정상적으로 감소시킨다")
